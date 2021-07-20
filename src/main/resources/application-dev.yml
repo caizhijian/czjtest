@@ -1,4 +1,12 @@
-
+spring:
+  datasource:
+    # 配置数据源
+    driver-class-name: com.mysql.jdbc.Driver
+    # 使用druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/demo_druid?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=true
+    username: root
+    password: root
 
 userToken:
 key: C80909EC
