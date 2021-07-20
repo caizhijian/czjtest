@@ -1,4 +1,4 @@
-package com.czj.module;
+package com.czj.module.tender.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,7 +11,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultAttribute;
 
-public class XmlUtil {
+public class TenderXmlUtil {
     /**
      * xml字符串转换成bean对象
      *
@@ -28,7 +28,7 @@ public class XmlUtil {
             //将xml格式的字符串转换成Document对象
             Document doc = DocumentHelper.parseText(xmlStr);
             //获取根节点
-            Element root = doc.getRootElement();
+            Element root = doc.getRootElement().element("Table");
 
             //将map对象的数据转换成Bean对象
             obj = mapToBean(root, clazzMap);
@@ -39,17 +39,15 @@ public class XmlUtil {
     }
 
 
-
-
-
     /**
      * 将Map对象通过反射机制转换成Bean对象
      *
+     * @param root
      * @param clazzMap 待转换的class包括对象属性的class
      * @return 转换后的Bean对象
      * @throws Exception 异常
      */
-    public static Object mapToBean( Element root,Map<String,Class> clazzMap) throws Exception {
+    public static Object mapToBean(Element root,Map<String,Class> clazzMap) throws Exception {
         //获取根节点下的所有元素
         List children = root.elements();
         List<DefaultAttribute> attrs= root.attributes();
@@ -124,10 +122,11 @@ public class XmlUtil {
             retVal = Double.parseDouble(value.toString());
         }else if(Date.class.getName().equalsIgnoreCase(fieldTypeClass.getName())){
             String s = value.toString();
-            if(s.length()>20){
-
+            if(s.length()==25){
+                retVal =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+08:00'").parse(value.toString());
+            }else{
+                retVal =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'+08:00'").parse(value.toString());
             }
-            retVal =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+08:00'").parse(value.toString());
         }else if(Boolean.class.getName().equalsIgnoreCase(fieldTypeClass.getName())){
             retVal = Boolean.parseBoolean(fieldTypeClass.getName());
         }else{
@@ -160,33 +159,5 @@ public class XmlUtil {
         }
         return null;
     }
-
-    public static String getXML(){
-        StringBuffer sb=new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<note name=\"xian\">");
-        sb.append("<to>George</to>");
-        sb.append("<Student>");
-        sb.append("<name>xian</name>");
-        sb.append("<classRoom>");
-        sb.append("<name>Ap111111</name>");
-        sb.append("</classRoom>");
-        sb.append("<age>13</age>");
-        sb.append("</Student>");
-        sb.append("<from>John</from>");
-        sb.append("<heading>Reminder</heading>");
-        sb.append("<Body>Don't forget the meeting!</Body>");
-        sb.append("</note>");
-        return sb.toString();
-    }
-
-    /*public static void main(String[] args) {
-        Map<String, Class> mapClass = new HashMap<String, Class>();
-        mapClass.put("note", Note.class);
-        mapClass.put("Student", Student.class);
-        mapClass.put("classRoom", ClassRoom.class);
-        Note note = (Note) xmlStrToBean(getXML(), mapClass);
-        System.out.println(note.getName() + "--" + note.getTo() + "--"*//*+note.getStudent().getAge()+note.getStudent().getClassRoom().getName()*//*);
-    }*/
 
 }
