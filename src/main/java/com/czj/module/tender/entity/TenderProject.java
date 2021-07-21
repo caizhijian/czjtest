@@ -19,7 +19,7 @@ public class TenderProject {
     /**
      * 主键id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     private String id;
 
     /**
@@ -40,7 +40,7 @@ public class TenderProject {
     /**
      * 投资项目统一代码
      */
-    private String INVEST_PROJECT_CODE;
+    private String investProjectCode;
 
     /**
      * 项目所属地区
@@ -95,7 +95,7 @@ public class TenderProject {
     /**
      * 招标代理人员身份证号
      */
-    private String delegateLinkManIDCard;
+    private String delegateLinkManIdcard;
 
     /**
      * 代理机构联系电话
