@@ -50,7 +50,6 @@ public class TenderXmlUtil {
     public static Object mapToBean(Element root,Map<String,Class> clazzMap) throws Exception {
         //获取根节点下的所有元素
         List children = root.elements();
-        List<DefaultAttribute> attrs= root.attributes();
 
         Map<String, Object> map = new HashMap<String, Object>();
         if(children != null && children.size() > 0) {
@@ -65,9 +64,6 @@ public class TenderXmlUtil {
 
             }
         }
-        for(DefaultAttribute att:attrs){
-            map.put(att.getName(),att.getText());
-        }
 
         Class clazz = clazzMap.get(root.getName());
         Object obj = clazz.newInstance();
@@ -80,15 +76,21 @@ public class TenderXmlUtil {
             for(Map.Entry<String, Object> entry : map.entrySet()) {
                 String propertyName = entry.getKey();
                 Object value = entry.getValue();
+                if("id".equalsIgnoreCase(propertyName)){
+                    Method method = clazz.getMethod("setId", String.class);
+                    method.invoke(obj, value);
+                    continue;
+                }
+
                 String setMethodName = "set"
                         + propertyName.substring(0, 1).toUpperCase()
                         + propertyName.substring(1);
                 Field field = getClassField(clazz, propertyName);
+                //判断是否包含方法
                 if(null!=field && methodName.contains(setMethodName)){
                     Class fieldTypeClass = field.getType();
                     value = convertValType(value, fieldTypeClass);
                     Method method = clazz.getMethod(setMethodName, field.getType());
-//                    Method method = clazz.getMethod(setMethodName);
                     if(null!=method){
                         method.invoke(obj, value);
                     }

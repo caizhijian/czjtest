@@ -93,7 +93,7 @@ public class DESCBCTest {
      */
     public static void main(String[] args) throws Exception {
         //tt();
-        tt2();
+        //tt2();
     }
 
     public static void tt() throws Exception {
@@ -143,7 +143,7 @@ public class DESCBCTest {
         TenderProject project = (TenderProject) TenderXmlUtil.xmlStrToBean(new String(DESCBCTest.desDecodeCBC(resultBytes2), "UTF-8"), mapClass);
         System.out.println(project);
 
-        String webServiceUrl = "http://238.62.169.140:8090/g6_venues/webservice/gtv-external-venues-service?wsdl";
+        /*String webServiceUrl = "http://238.62.169.140:8090/g6_venues/webservice/gtv-external-venues-service?wsdl";
         JaxWsDynamicClientFactory factory1 = JaxWsDynamicClientFactory.newInstance();
         Client client = factory1.createClient(webServiceUrl);
         HTTPConduit conduit = (HTTPConduit)client.getConduit();
@@ -158,6 +158,6 @@ public class DESCBCTest {
         String startDateTime = "20201018090000";
         String endDateTime = "20201228160000";
         Object[] result = client.invoke("queryFreeRoomInfo",startDateTime ,endDateTime ); //queryFreeRoomInfo为方法名；
-        System.out.println("返回结果：" + result[0].toString());
+        System.out.println("返回结果：" + result[0].toString());*/
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * @Author:caizhijian
  * @Date:2021-07-20
  */
-public interface TenderProjectService extends IService<TenderProject> {
+public interface ITenderProjectService extends IService<TenderProject> {
 
     List getTederNoByType(String type) throws Exception;
 

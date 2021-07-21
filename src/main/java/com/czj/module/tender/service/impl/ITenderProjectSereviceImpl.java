@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.czj.module.DESCBCTest;
 import com.czj.module.tender.entity.TenderProject;
 import com.czj.module.tender.mapper.TenderProjectMapper;
-import com.czj.module.tender.service.TenderProjectService;
+import com.czj.module.tender.service.ITenderProjectService;
 import com.czj.module.tender.util.TenderXmlUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.BASE64Decoder;
 
@@ -19,8 +18,8 @@ import java.util.*;
  * @Author:caizhijian
  * @Date:2021-07-20
  */
-@Service
-public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements TenderProjectService {
+@Service("tenderProjectService")
+public class ITenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements ITenderProjectService {
 
     /**
      * 根据数据类型获取项目编号

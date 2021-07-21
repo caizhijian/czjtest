@@ -1,7 +1,6 @@
 package com.czj.module.task;
 
-import com.czj.module.tender.service.TenderProjectService;
-import com.czj.module.tender.util.TenderUtil;
+import com.czj.module.tender.service.ITenderProjectService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ import java.util.List;
 @Component
 public class SysTenderProjectTask {
 
-    private TenderProjectService tenderProjectService;
+    private ITenderProjectService tenderProjectService;
 
     @Scheduled(cron = "0 0 23 * * ?")
     public void sysTenderProject() throws Exception {

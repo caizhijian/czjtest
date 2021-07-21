@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Date:2021-07-20
  */
 @SpringBootApplication
-@MapperScan("com.czj.module.tender.mapper")
+@MapperScan("com.czj.module")
 public class CzjTestAPP {
 
     public static void main(String[] args) {

@@ -2,7 +2,7 @@ package com.czj.module.tender.util;
 
 import com.czj.module.DESCBCTest;
 import com.czj.module.tender.entity.TenderProject;
-import com.czj.module.tender.service.TenderProjectService;
+import com.czj.module.tender.service.ITenderProjectService;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -14,7 +14,7 @@ import java.util.*;
 public class TenderUtil {
 
     @Autowired
-    private TenderProjectService tenderProjectService;
+    private ITenderProjectService tenderProjectService;
 
     /**
      * 根据数据类型获取项目编号
