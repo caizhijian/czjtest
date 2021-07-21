@@ -67,6 +67,9 @@ public class ITenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper,
      */
     public void sysTederProject() throws Exception {
 
+        //获取项目id
+
+
         //根据项目编号查询项目信息
 
         //得到响应数据
