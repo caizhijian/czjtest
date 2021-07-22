@@ -21,6 +21,7 @@ import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import java.security.Key;
 import java.security.Security;
+import java.time.LocalDate;
 import java.util.*;
 
 public class DESCBCTest {
@@ -98,7 +99,7 @@ public class DESCBCTest {
      */
     public static void main(String[] args) throws Exception {
         //tt();
-        tt4();
+        tt3();
     }
 
     public static void tt() throws Exception {
@@ -146,6 +147,19 @@ public class DESCBCTest {
         mapClass.put("Table", TenderProject.class);
         TenderProject project = (TenderProject) TenderXmlUtil.xmlStrToBean(new String(DESCBCTest.desDecodeCBC(resultBytes), "UTF-8"), mapClass);
         System.out.println(project);
+    }
+
+
+    public static void tt3() throws Exception {
+        LocalDate startDate = LocalDate.of(2018, 1, 1);
+        LocalDate endDate = LocalDate.of(2021, 6, 30);
+
+        while(startDate.isBefore(endDate)){
+            LocalDate localDate = startDate.plusDays(9);
+            System.out.println(localDate);
+            startDate = localDate.plusDays(1);
+        }
+
     }
 
     public static void tt4() throws Exception {

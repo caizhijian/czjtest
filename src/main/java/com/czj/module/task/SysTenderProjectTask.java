@@ -17,9 +17,8 @@ public class SysTenderProjectTask {
 
     @Scheduled(cron = "0 0 23 * * ?")
     public void sysTenderProject() throws Exception {
-        List projectNos = tenderProjectService.getTederNoByType("-1");
         System.out.println("定时器启动");
-        tenderProjectService.sysTederProject();
+        tenderProjectService.sysTenderProject("2018-01-01","2018-05-31");
     }
 
 }

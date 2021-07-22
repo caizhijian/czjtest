@@ -2,7 +2,9 @@ package com.czj.module.tender.controller;
 
 import com.czj.module.tender.service.ITenderProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("tenderProjectController")
@@ -13,9 +15,11 @@ public class TenderProjectController {
     private ITenderProjectService tenderProjectService;
 
     @RequestMapping("/sysProject")
-    public String sysProject() throws Exception {
-        tenderProjectService.sysTederProject();
-        return "666";
+    @Async
+    public void sysProject(@RequestParam String start,String end) throws Exception {
+        tenderProjectService.sysTenderProject(start,end);
+        System.out.println("===============================================");
+        System.out.println("同步完成");
     }
 
 }

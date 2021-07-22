@@ -1,14 +1,17 @@
-package com.czj.module.tender.util;
+package com.czj.module.tender.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.czj.module.DESCBCTest;
 import com.czj.module.tender.entity.TenderProject;
+import com.czj.module.tender.mapper.TenderProjectMapper;
 import com.czj.module.tender.service.ITenderProjectService;
+import com.czj.module.tender.util.TenderXmlUtil;
 import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -19,24 +22,28 @@ import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class TenderUtil {
+/**
+ * @Author:caizhijian
+ * @Date:2021-07-20
+ */
+@Service("tenderProjectService")
+public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements ITenderProjectService {
 
-    @Autowired
-    private ITenderProjectService tenderProjectService;
+    private static final String endpoint = "";
 
     /**
      * 根据数据类型获取项目编号
      * @param type 数据类型
      * @throws Exception
      */
+    @Override
     public List<String> getTenderNoByType(String startStr, String endStr, String type) throws Exception {
 
         //读取同步记录表数据
 
         //调用接口获取数据
-        String endpoint= "";
         String result = null;
-        Service service = new Service();
+        org.apache.axis.client.Service service = new org.apache.axis.client.Service();
         Call call;
         try {
             call=(Call)service.createCall();
@@ -66,7 +73,6 @@ public class TenderUtil {
             String startDateTime = new BASE64Encoder().encodeBuffer(DESCBCTest.desEncodeCBC(startBytes));
             String endDateTime = new BASE64Encoder().encodeBuffer(DESCBCTest.desEncodeCBC(endBytes));
             result = (String)call.invoke(new Object[]{userToken,startDateTime,endDateTime});//远程调用
-            System.out.println(result);
         } catch (ServiceException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -97,6 +103,7 @@ public class TenderUtil {
         return tenderNos;
     }
 
+
     /**
      * 查询项目信息
      * @param tenderNo 项目编号
@@ -104,9 +111,8 @@ public class TenderUtil {
      */
     public String getTenderProject(String tenderNo){
         //调用接口获取数据
-        String endpoint= "";
         String result = null;
-        Service service = new Service();
+        org.apache.axis.client.Service service = new org.apache.axis.client.Service();
         Call call;
         try {
             call=(Call)service.createCall();
@@ -143,22 +149,25 @@ public class TenderUtil {
         return result;
     }
 
-    /**
-     * 同步项目信息
-     */
-    public void sysTederProject() throws Exception {
+
+    public void sysTenderProject(String start, String end) throws Exception {
+
 
         //查询项目编号
-        LocalDate startDate = LocalDate.of(2018, 1, 1);
-        LocalDate endDate = LocalDate.of(2021, 6, 30);
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
 
         while(startDate.isBefore(endDate)){
             LocalDate localDate = startDate.plusDays(9);
-            System.out.println(localDate);
+            System.out.println("startDate:"+startDate.toString()+",endDate:"+localDate.toString());
             List<String> tenderNos = getTenderNoByType(startDate.toString(), localDate.toString(), "-1");
             for(String tenderNo : tenderNos){
                 //根据项目编号查询项目信息
                 String originalData = getTenderProject(tenderNo);
+                if(StringUtils.isBlank(originalData)){
+                    continue;
+                }
+
                 //得到响应数据
                 //String originalData = "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";
                 byte[] resultBytes = new BASE64Decoder().decodeBuffer(originalData);
@@ -170,10 +179,9 @@ public class TenderUtil {
                 //投标项目信息
                 TenderProject project = (TenderProject) TenderXmlUtil.xmlStrToBean(resultData, mapClass);
                 //保存
-                tenderProjectService.saveOrUpdate(project);
+                this.saveOrUpdate(project);
             }
             startDate = localDate.plusDays(1);
         }
     }
-
 }
