@@ -29,12 +29,12 @@ public class TenderSysRecord {
     /**
      * 开始时间
      */
-    private Date startDate;
+    private Date sysStartDate;
 
     /**
      * 结束时间
      */
-    private Date endDate;
+    private Date sysEndDate;
 
     /**
      * 项目数

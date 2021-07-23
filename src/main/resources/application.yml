@@ -7,6 +7,12 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/caizhijian?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=true
     username: root
     password: caizhijian
+    druid:
+      filter:
+        stat:
+          db-type: mysql
+          log-slow-sql: true
+          slow-sql-millis: 2000
 
 server:
   port: 9091

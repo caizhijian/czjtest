@@ -6,7 +6,9 @@ import com.czj.module.tender.service.ITenderSysRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,10 +29,14 @@ public class SysTenderProjectTask {
     @Autowired
     private ITenderSysRecordService tenderSysRecordService;
 
-    @Scheduled(cron = "0 */2 * * * ?")
-    public void sysTenderProject() throws Exception {
+//    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(fixedDelay = 1*60*1000)
+        public void sysTenderProject() throws Exception {
         System.out.println("定时器启动");
         Date lastRecord = tenderSysRecordService.getLastRecord();
+        if(null==lastRecord){
+            lastRecord = new SimpleDateFormat("yyyy-MM-dd").parse("2018-01-01");
+        }
         Instant instant = lastRecord.toInstant();
         ZoneId zone = ZoneId.systemDefault();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
@@ -43,8 +49,8 @@ public class SysTenderProjectTask {
         Instant startInstant = start.atStartOfDay().atZone(zone).toInstant();
         Instant endInstant = start.atStartOfDay().atZone(zone).toInstant();
 
-        record.setStartDate(Date.from(startInstant));
-        record.setEndDate(Date.from(endInstant));
+        record.setSysStartDate(Date.from(startInstant));
+        record.setSysEndDate(Date.from(endInstant));
         tenderSysRecordService.save(record);
         System.out.println("完成同步");
     }

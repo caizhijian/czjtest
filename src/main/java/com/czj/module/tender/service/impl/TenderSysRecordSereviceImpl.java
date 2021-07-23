@@ -1,5 +1,6 @@
 package com.czj.module.tender.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.czj.module.DESCBCTest;
 import com.czj.module.tender.entity.TenderProject;
@@ -38,7 +39,11 @@ public class TenderSysRecordSereviceImpl extends ServiceImpl<TenderSysRecordMapp
 
     @Override
     public Date getLastRecord() {
-        return tenderSysRecordMapper.queryLastRecord("");
+        QueryWrapper<TenderSysRecord> wrapper=new QueryWrapper<>();
+        wrapper.orderByDesc("sys_end_date");
+        TenderSysRecord tenderSysRecord = getBaseMapper().selectOne(wrapper);
+        System.out.println(tenderSysRecord);
+        return tenderSysRecord.getSysEndDate();
     }
 
 }
