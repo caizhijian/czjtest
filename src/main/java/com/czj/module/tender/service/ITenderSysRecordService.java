@@ -3,6 +3,7 @@ package com.czj.module.tender.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.czj.module.tender.entity.TenderSysRecord;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -11,6 +12,6 @@ import java.util.Date;
  */
 public interface ITenderSysRecordService extends IService<TenderSysRecord> {
 
-    Date getLastRecord();
+    Date getLastRecord() throws ParseException;
 
 }

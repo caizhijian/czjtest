@@ -2,15 +2,20 @@ package com.czj.module.tender.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.czj.module.DESCBCTest;
+import com.czj.module.tender.entity.TenderNo;
 import com.czj.module.tender.entity.TenderProject;
+import com.czj.module.tender.entity.TenderSysLog;
 import com.czj.module.tender.mapper.TenderProjectMapper;
+import com.czj.module.tender.service.ITenderNoService;
 import com.czj.module.tender.service.ITenderProjectService;
+import com.czj.module.tender.service.ITenderSysLogService;
 import com.czj.module.tender.util.TenderXmlUtil;
 import org.apache.axis.client.Call;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -30,6 +35,12 @@ import java.util.*;
 public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements ITenderProjectService {
 
     private static final String endpoint = "";
+
+    @Autowired
+    private ITenderNoService tenderNoService;
+
+    @Autowired
+    private ITenderSysLogService tenderSysLogService;
 
     /**
      * 根据数据类型获取项目编号
@@ -152,7 +163,6 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
 
     public void sysTenderProject(String start, String end) throws Exception {
 
-
         //查询项目编号
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
@@ -178,8 +188,32 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
                 mapClass.put("Table", TenderProject.class);
                 //投标项目信息
                 TenderProject project = (TenderProject) TenderXmlUtil.xmlStrToBean(resultData, mapClass);
-                //保存
-                this.saveOrUpdate(project);
+                Boolean sysResult = true;
+                String resultLog = null;
+                try {
+                    //保存项目信息
+                    this.saveOrUpdate(project);
+                }catch (Exception e){
+                    sysResult = false;
+                    String eStr = e.toString();
+                    resultLog = eStr.length()>2000?eStr.substring(0, 2000):eStr;
+                }
+
+                //保存响应信息
+                TenderSysLog sysLog = new TenderSysLog();
+                sysLog.setTenderNo(tenderNo);
+                sysLog.setSysResult(sysResult);
+                sysLog.setSysResultLog(resultLog);
+                sysLog.setSysResultData(resultData.length()>3000?resultData.substring(0, 3000):resultData);
+                sysLog.setCreateTime(new Date());
+                tenderSysLogService.save(sysLog);
+
+                //保存项目编号
+                TenderNo tenderNoEntry = new TenderNo();
+                tenderNoEntry.setTenderNo(tenderNo);
+                tenderNoEntry.setDataType("-1");
+                tenderNoService.save(tenderNoEntry);
+
             }
             startDate = localDate.plusDays(1);
         }
