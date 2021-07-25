@@ -151,15 +151,10 @@ public class DESCBCTest {
 
 
     public static void tt3() throws Exception {
-        LocalDate startDate = LocalDate.of(2018, 1, 1);
-        LocalDate endDate = LocalDate.of(2021, 6, 30);
-
-        while(startDate.isBefore(endDate)){
-            LocalDate localDate = startDate.plusDays(9);
-            System.out.println(localDate);
-            startDate = localDate.plusDays(1);
-        }
-
+        String data = "yfcX1lqiKtW9v2i9iZ8pEOqoUkRdS589CKdLT8o0bwYlXDAnY2pDV0PS85NmmwvM";
+        byte[] resultBytes = new BASE64Decoder().decodeBuffer(data);
+        String s = new String(DESCBCTest.desDecodeCBC(resultBytes), "UTF-8");
+        System.out.println(s);
     }
 
     public static void tt4() throws Exception {

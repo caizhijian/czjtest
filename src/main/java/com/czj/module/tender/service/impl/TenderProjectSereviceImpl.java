@@ -10,8 +10,11 @@ import com.czj.module.tender.service.ITenderNoService;
 import com.czj.module.tender.service.ITenderProjectService;
 import com.czj.module.tender.service.ITenderSysLogService;
 import com.czj.module.tender.util.TenderXmlUtil;
+import freemarker.template.utility.StringUtil;
 import org.apache.axis.client.Call;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -34,6 +37,8 @@ import java.util.*;
 @Service("tenderProjectService")
 public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements ITenderProjectService {
 
+    private static Logger logger = LogManager.getLogger(TenderProjectSereviceImpl.class);
+
     private static final String endpoint = "";
 
     @Autowired
@@ -52,10 +57,10 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
 
         //读取同步记录表数据
 
-        //调用接口获取数据
-        String result = null;
         org.apache.axis.client.Service service = new org.apache.axis.client.Service();
         Call call;
+
+        List<String> tenderNos = new ArrayList();
         try {
             call=(Call)service.createCall();
             call.setTargetEndpointAddress(endpoint);//远程调用路径
@@ -83,32 +88,36 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
             byte[] endBytes = endStr.getBytes("UTF-8");
             String startDateTime = new BASE64Encoder().encodeBuffer(DESCBCTest.desEncodeCBC(startBytes));
             String endDateTime = new BASE64Encoder().encodeBuffer(DESCBCTest.desEncodeCBC(endBytes));
-            result = (String)call.invoke(new Object[]{userToken,startDateTime,endDateTime});//远程调用
+            //调用接口获取数据
+            String result = (String)call.invoke(new Object[]{userToken,startDateTime,endDateTime});//远程调用
+            //得到响应数据
+            byte[] resultBytes = new BASE64Decoder().decodeBuffer(result);
+            String s = new String(DESCBCTest.desDecodeCBC(resultBytes) ,"UTF-8");
+            logger.info("tenderNoXml:{}",s);
+            if("暂无数据".equals(s)){
+                return tenderNos;
+            }
+            //创建并加载xml
+            Document document= DocumentHelper.parseText(s);
+
+            //获取根节点
+            Element rootElement = document.getRootElement();
+            Iterator iterator = rootElement.elementIterator();
+            while (iterator.hasNext()){
+                Element table = (Element) iterator.next();
+                Element dataType = table.element("DataType");
+
+                if(dataType!=null && type.equals(dataType.getStringValue())){
+                    Element tenderNo = table.element("TenderNo");
+                    if(null!=tenderNo){
+                        tenderNos.add(tenderNo.getStringValue());
+                    }
+                }
+            }
         } catch (ServiceException e) {
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();
-        }
-
-        //得到响应数据
-        byte[] resultBytes = new BASE64Decoder().decodeBuffer(result);
-        List<String> tenderNos = new ArrayList();
-        //创建并加载xml
-        Document document= DocumentHelper.parseText(new String(DESCBCTest.desDecodeCBC(resultBytes), "UTF-8"));
-
-        //获取根节点
-        Element rootElement = document.getRootElement();
-        Iterator iterator = rootElement.elementIterator();
-        while (iterator.hasNext()){
-            Element table = (Element) iterator.next();
-            Element dataType = table.element("DataType");
-
-            if(dataType!=null && type.equals(dataType.getStringValue())){
-                Element tenderNo = table.element("TenderNo");
-                if(null!=tenderNo){
-                    tenderNos.add(tenderNo.getStringValue());
-                }
-            }
         }
 
         return tenderNos;
@@ -170,6 +179,7 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
         while(startDate.isBefore(endDate)){
             LocalDate localDate = startDate.plusDays(9);
             System.out.println("startDate:"+startDate.toString()+",endDate:"+localDate.toString());
+
             List<String> tenderNos = getTenderNoByType(startDate.toString(), localDate.toString(), "-1");
             for(String tenderNo : tenderNos){
                 //根据项目编号查询项目信息
@@ -183,7 +193,7 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
                 byte[] resultBytes = new BASE64Decoder().decodeBuffer(originalData);
                 //解密编码后的结果
                 String resultData = new String(DESCBCTest.desDecodeCBC(resultBytes), "UTF-8");
-
+                logger.info("tenderProject:{}",resultData);
                 Map<String, Class> mapClass = new HashMap<String, Class>();
                 mapClass.put("Table", TenderProject.class);
                 //投标项目信息
@@ -192,7 +202,8 @@ public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, 
                 String resultLog = null;
                 try {
                     //保存项目信息
-                    this.saveOrUpdate(project);
+                    boolean b = this.saveOrUpdate(project);
+                    System.out.println(b);
                 }catch (Exception e){
                     sysResult = false;
                     String eStr = e.toString();

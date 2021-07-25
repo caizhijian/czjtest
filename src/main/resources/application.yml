@@ -6,7 +6,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://127.0.0.1:3306/caizhijian?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=true
     username: root
-    password: caizhijian
+    password:
     druid:
       filter:
         stat:
@@ -18,7 +18,8 @@ server:
   port: 9091
   servlet:
     context-path: /czj
-
+logging:
+  config: classpath:log4j2.xml
 
 key: C80909EC
 keyiv:  [0x12, 0x34, 0x56, 0x78, -112, -85, -51, -17]
