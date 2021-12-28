@@ -29,7 +29,7 @@ public class SysTenderProjectTask {
 
 //    @Scheduled(cron = "0 */2 * * * ?")
     //一分钟同步一次
-    @Scheduled(fixedDelay = 1*60*1000)
+//    @Scheduled(fixedDelay = 1*60*1000)
         public void sysTenderProject() throws Exception {
         System.out.println("定时器启动");
         LocalDate of = LocalDate.of(2021, 06, 30);

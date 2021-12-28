@@ -38,7 +38,7 @@ import java.util.*;
 public class TenderProjectSereviceImpl extends ServiceImpl<TenderProjectMapper, TenderProject> implements ITenderProjectService {
 
     private static Logger logger = LogManager.getLogger(TenderProjectSereviceImpl.class);
-
+    //注释掉地址
     private static final String endpoint = "";
 
     @Autowired
