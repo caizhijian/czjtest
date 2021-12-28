@@ -4,9 +4,9 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     # 使用druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/caizhijian?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/caizhijian?characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=false
     username: root
-    password:
+    password: 123456
     druid:
       filter:
         stat:
@@ -15,9 +15,20 @@ spring:
           slow-sql-millis: 2000
 
 server:
-  port: 9091
+  port: 444
   servlet:
     context-path: /czj
+#https端口号.
+
+  ssl:
+    #证书的路径.
+    key-store: classpath:keystore.p12
+    #证书密码，请修改为您自己证书的密码.
+    key-store-password: caizhijian
+    #秘钥库类型
+    keyStoreType: PKCS12
+    #证书别名
+    keyAlias: test
 logging:
   config: classpath:log4j2.xml
 
